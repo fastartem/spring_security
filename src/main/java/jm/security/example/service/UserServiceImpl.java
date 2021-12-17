@@ -1,0 +1,44 @@
+package jm.security.example.service;
+
+import jm.security.example.dao.UserDao;
+import jm.security.example.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    private final UserDao userDao;
+
+    @Autowired
+    public UserServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void add(User user) {
+        userDao.add(user);
+    }
+
+    public void update(User user) {
+        userDao.add(user);
+    }
+
+    public List<User> listUsers() {
+        return userDao.listUsers();
+    }
+
+    public void delete(Long id) {
+        userDao.delete(id);
+    }
+
+    public User findById(Long id) {
+        return userDao.findById(id);
+    }
+
+    @Override
+    public User getUserByName(String name) {
+        return userDao.getUserByName(name);
+    }
+}

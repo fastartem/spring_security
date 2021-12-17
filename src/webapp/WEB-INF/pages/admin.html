@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello user</title>
+</head>
+<body>
+<h1>Users</h1>
+<table>
+    <tr>
+        <th>No</th>
+        <th>Name</th>
+        <th>LastName</th>
+        <th>Email</th>
+    </tr>
+    <tr th:each="user: ${users}">
+        <td th:utext="${user.getId()}">No</td>
+        <td th:utext="${user.getName()}">Name</td>
+        <td><a th:href="@{user-update/{id}(id=${user.getId()})}">Update</a></td>
+        <td><a th:href="@{user-delete/{id}(id=${user.getId()})}">Delete</a></td>
+    </tr>
+    <p><a href="/user-add">Add user</a></p>
+
+</table>
+</body>
+</html>

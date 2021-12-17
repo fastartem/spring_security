@@ -29,12 +29,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // http.csrf().disable(); - попробуйте выяснить сами, что это даёт
-        http.authorizeRequests()
-                .antMatchers("/").permitAll() // доступность всем
-                .antMatchers("/user").access("hasAnyRole('ROLE_USER')") // разрешаем входить на /user пользователям с ролью User
-                .and().formLogin()  // Spring сам подставит свою логин форму
-                .successHandler(successUserHandler); // подключаем наш SuccessHandler для перенеправления по ролям
+        http.formLogin()
+                .permitAll()
+                .successHandler(successUserHandler)
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll();
+
+//        http.logout()
+//                // разрешаем делать логаут всем
+//                .permitAll()
+//                // указываем URL логаута
+//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+//                // указываем URL при удачном логауте
+//                .logoutSuccessUrl("/login?logout")
+//                //выклчаем кроссдоменную секьюрность (на этапе обучения неважна)
+//                .and().csrf().disable();
+
+        http
+                .authorizeRequests()
+                .antMatchers("/admin").access("hasRole('ADMIN')")
+                // .antMatchers("/user").access("hasAnyRole('ADMIN','USER')")
+                .antMatchers("/user").access("hasRole('USER')")
+                .anyRequest().authenticated()
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login");
     }
 
     // Необходимо для шифрования паролей
