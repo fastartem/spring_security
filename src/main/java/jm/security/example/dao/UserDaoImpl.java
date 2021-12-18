@@ -17,16 +17,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getUserByName(String name) {
-        User user = (User) entityManager.createQuery("from User u where u.name=:name")
+        User user = (User) entityManager.createQuery("SELECT u FROM User u where u.name=:name")
                 .setParameter("name", name).getSingleResult();
-
         return user;
     }
 
     @Override
     @Transactional
     public void add(User user) {
-        // user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         entityManager.persist(user);
     }
 
@@ -39,6 +37,8 @@ public class UserDaoImpl implements UserDao {
         entity.setName(user.getName());
         entity.setPassword(user.getPassword());
         entity.setRoles(user.getRoles());
+
+        entityManager.merge(user);
     }
 
     @Override
@@ -48,6 +48,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         entityManager.createQuery("delete from User u where u.id=:id")
                 .setParameter("id", id).executeUpdate();

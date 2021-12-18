@@ -1,5 +1,8 @@
 package jm.security.example.security;
 
+import jm.security.example.model.User;
+import jm.security.example.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -12,13 +15,18 @@ import java.util.Set;
 
 @Component
 public class SuccessUserHandler implements AuthenticationSuccessHandler {
+    @Autowired
+    private UserService userService;
+
     // Spring Security использует объект Authentication, пользователя авторизованной сессии.
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
+        long id = userService.getUserByName(authentication.getName()).getId();
+
         if (roles.contains("ROLE_USER")) {
-            httpServletResponse.sendRedirect("/user");
-        } else if (roles.contains("ROLE_ADMIN")){
+            httpServletResponse.sendRedirect("/user/" + id);
+        } else if (roles.contains("ROLE_ADMIN")) {
             httpServletResponse.sendRedirect("/admin");
         }
     }

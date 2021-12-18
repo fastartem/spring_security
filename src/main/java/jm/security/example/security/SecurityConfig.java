@@ -22,36 +22,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.successUserHandler = successUserHandler;
     }
 
-    @Autowired
-    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder()); // конфигурация для прохождения аутентификации
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin()
-                .permitAll()
-                .successHandler(successUserHandler)
-                .usernameParameter("username")
-                .passwordParameter("password")
-                .permitAll();
-
-//        http.logout()
-//                // разрешаем делать логаут всем
-//                .permitAll()
-//                // указываем URL логаута
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                // указываем URL при удачном логауте
-//                .logoutSuccessUrl("/login?logout")
-//                //выклчаем кроссдоменную секьюрность (на этапе обучения неважна)
-//                .and().csrf().disable();
-
         http
                 .authorizeRequests()
                 .antMatchers("/admin").access("hasRole('ADMIN')")
-                // .antMatchers("/user").access("hasAnyRole('ADMIN','USER')")
-                .antMatchers("/user").access("hasRole('USER')")
+                .antMatchers("/user").access("hasAnyRole('ADM   IN','USER')")
                 .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .permitAll()
+                .successHandler(successUserHandler)
                 .and()
                 .logout()
                 .logoutUrl("/logout")
